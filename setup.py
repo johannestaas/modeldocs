@@ -50,8 +50,24 @@ setup(
     # zip_safe=False,
     #
     # For including non-python files:
-    # package_data={
-    #     'modeldocs': ['templates/*.html'],
-    # },
-    # include_package_data=True,
+    package_data={
+        'modeldocs': [
+            'templates/*.js',
+            'templates/*.css',
+            'templates/*.html',
+            'templates/css/*.css',
+            'templates/img/*.ico',
+            'templates/locales/*.js',
+            'templates/locales/*.css',
+            'templates/utils/*.js',
+            'templates/utils/*.css',
+            'templates/vendor/*.js',
+            'templates/vendor/*.css',
+            'templates/vendor/path-to-regexp/LICENSE',
+            'templates/vendor/path-to-regexp/index.js',
+            'templates/vendor/prettify/*.js',
+            'templates/vendor/prettify/*.css',
+        ],
+    },
+    include_package_data=True,
 )
