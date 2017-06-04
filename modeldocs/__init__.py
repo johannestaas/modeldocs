@@ -5,10 +5,10 @@ Documentation generator for your model subclasses.
 '''
 
 __title__ = 'modeldocs'
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 __all__ = ()
 __author__ = 'Johan Nestaas <johannestaas@gmail.com>'
-__license__ = 'GPLv3+'
+__license__ = 'MIT'
 __copyright__ = 'Copyright 2017 Johan Nestaas'
 
 
