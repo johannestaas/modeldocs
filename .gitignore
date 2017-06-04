@@ -1,0 +1,10 @@
+syntax: glob
+*.pyc
+*.log
+build/*
+modeldocs.egg-info/*
+dist/*
+modeldocs.egg*
+.tox/*
+.cache/*
+.ropeproject/*
