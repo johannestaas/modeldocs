@@ -22,6 +22,7 @@ Usage
 -----
 
 First, create a configuration file in json, like::
+
     {
         "name": "My Documentation",
         "version": "1.0.0",
