@@ -21,32 +21,34 @@ Or from the project root directory::
 Usage
 -----
 
-First, create a configuration file in json, like::
+First, create a configuration file in json, like (optional include)::
 
     {
         "name": "My Documentation",
         "version": "1.0.0",
         "title": "My Documentation Title",
         "description": "This documents my data models",
-        "module_path": "./models/base_class_module_path.py",
-        "base_class": "MyBaseClass",
-        "paths": [
-            "./models/car.py",
-            "./models/motorcycle.py"
+        "include": [
+            "mymodule",
+            "tests/myfile.py"
         ]
     }
 
 Save it as modeldocs.json in the current directory.
 
-Then simply run it::
+Then simply run it, and it'll search for all modeldocs recursively from the current directory::
 
     $ modeldocs
 
-Or pass a path to your custom config::
+Or, specify via the command line where to look and what files::
+
+    $ modeldocs --include mymodule myfile.py
+
+Or pass a path to your custom config, which may specify an "include" configuration variable::
 
     $ modeldocs --config my_model_docs.json
 
-Or specify your output directory (default "docs")::
+Also, you can specify a custom output directory (default "docs")::
 
     $ modeldocs --output mydocs
 
@@ -80,6 +82,8 @@ modeldocs will do the rest and generate the documentation into the "docs" direct
 Release Notes
 -------------
 
+:0.1.1:
+    Better method of parsing, without loading any python modules. Just give it an include directory.
 :0.1.0:
     Generates docs!
 :0.0.1:
