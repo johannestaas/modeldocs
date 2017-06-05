@@ -85,6 +85,8 @@ and generate the documentation into the "docs" directory.
 Release Notes
 -------------
 
+:0.1.2:
+    Add note to readme
 :0.1.1:
     Better method of parsing, without loading any python modules. Just give it an include directory.
 :0.1.0:
