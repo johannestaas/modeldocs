@@ -1,11 +1,16 @@
 import os
 import re
+import sys
 import json
 from shutil import copytree
 from enum import Enum
-from importlib.machinery import SourceFileLoader
 
 
+RE_DOCSTR = re.compile(
+    r'.*class (?P<classname>\w+)(?:\((?P<bases>[^\)]*?)\))?:\s*'
+    r'(?:\'\'\'|""")(?P<docstr>.*?)(?:\'\'\'|""")',
+    flags=re.MULTILINE | re.DOTALL,
+)
 RE_SINGLE = re.compile(
     r'\s*@model(?P<tag>Group|Title|Description|Version)\s+(?P<value>.*)$'
 )
@@ -96,6 +101,15 @@ class ModelPage:
             raise NotImplementedError
 
 
+class DocstrBlock:
+
+    def __init__(self, path=None, name=None, bases=None, docstr=None):
+        self.path = path
+        self.name = name
+        self.bases = bases
+        self.docstr = docstr
+
+
 class Document:
 
     @staticmethod
@@ -108,9 +122,7 @@ class Document:
 
     def __init__(self, default_version=None, name=None, version=None,
                  description=None, title=None, order=None, **kwargs):
-        self.base = None
-        self.name = None
-        self.modules = {}
+        self.doc_blocks = {}
         self.project = {
             'name': name or 'Data Model Documentation',
             'version': version or '0.0.0',
@@ -131,28 +143,27 @@ class Document:
         self.json_output = None
         self.default_version = default_version or version or '0.0.0'
 
-    def load_base(self, path, name):
-        module_name = self._path_to_module_name(path)
-        module = SourceFileLoader(module_name, path).load_module()
-        base = getattr(module, name)
-        self.base = base
-        self.name = name
-        self.class_paths = {}
+    def load_path(self, path):
+        with open(path) as f:
+            text = f.read()
+        for classname, basestr, docstr in RE_DOCSTR.findall(text):
+            print('Parsing {}::{}'.format(path, classname))
+            bases = [x.strip() for x in basestr.split(',')]
+            block = DocstrBlock(path=path, name=classname, bases=bases,
+                                docstr=docstr)
+            self.doc_blocks[(path, classname)] = block
 
-    def load(self, paths):
+    def load(self, paths=None, dirs=None):
         for path in paths:
-            module_name = self._path_to_module_name(path)
-            self.modules[path] = SourceFileLoader(
-                module_name, path).load_module()
-        self.classes = {
-            x.__name__: x
-            for x in self.base.__subclasses__()
-        }
-        for x in self.base.__subclasses__():
-            for path, module in self.modules.items():
-                if hasattr(module, x.__name__):
-                    self.class_paths[x.__name__] = path
-        print('loaded subclasses: {}'.format(', '.join(self.classes.keys())))
+            self.load_path(path)
+        for d in dirs:
+            for root, _, filenames in os.walk(d):
+                for fname in filenames:
+                    path = os.path.join(root, fname)
+                    modname, ext = os.path.splitext(fname)
+                    if ext.lower() != '.py':
+                        continue
+                    self.load_path(path)
 
     def parse_docline(self, line):
         if RE_SINGLE.match(line):
@@ -175,12 +186,12 @@ class Document:
         else:
             return None, None
 
-    def parse_class_docstr(self, name, docstr):
-        lines = docstr.splitlines()
+    def parse_class_docstr(self, block):
+        lines = block.docstr.splitlines()
         last_type = None
         last_match = None
-        page = ModelPage(name, default_version=self.default_version,
-                         url=self.class_paths.get(name, name))
+        page = ModelPage(block.name, default_version=self.default_version,
+                         url='{}::{}'.format(block.path, block.name))
         for line in lines:
             # if blank, ingest last and continue
             if not line.strip():
@@ -213,17 +224,28 @@ class Document:
 
     def generate_pages(self):
         pages = []
-        for name, klass in self.classes.items():
-            if not klass.__doc__.strip():
+        for path, name in self.doc_blocks:
+            block = self.doc_blocks[(path, name)]
+            if '@model' not in block.docstr:
                 continue
-            page = self.parse_class_docstr(name, klass.__doc__)
+            page = self.parse_class_docstr(block)
             if page.ingested:
                 pages.append(page)
         return pages
 
-    def generate_docs(self, base_module_path, base_class_name, paths):
-        self.load_base(base_module_path, base_class_name)
-        self.load(paths)
+    def generate_docs(self, include_paths):
+        paths = []
+        dirs = []
+        for path in include_paths:
+            if os.path.isfile(path):
+                paths.append(path)
+            elif os.path.isdir(path):
+                dirs.append(path)
+            elif not os.path.exists(path):
+                print('Does not exist: {}'.format(path), file=sys.stderr)
+            else:
+                print('Not a file or dir: {}'.format(path), file=sys.stderr)
+        self.load(paths=paths, dirs=dirs)
         pages = self.generate_pages()
         self.json_output = json.dumps([x.data for x in pages], indent=4)
 
