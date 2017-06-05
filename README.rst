@@ -73,7 +73,7 @@ The format is pretty simple. It follows a very similar format to apidocs (check 
         @modelExample {json} Motorcycle Example
             {
                 "name": "yamaha v-star 650",
-                "year": 2007,
+                "year": 2002,
                 ...
             }
         '''
