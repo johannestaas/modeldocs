@@ -23,8 +23,9 @@ def main():
     with open(args.config) as f:
         config = json.load(f)
     doc = Document(**config)
-    doc.generate_docs(config['module_path'], config['base_class'],
-                      config['paths'])
+    if 'include' not in config:
+        config['include'] = '.'
+    doc.generate_docs(config['include'])
     doc.output(args.output)
 
 
