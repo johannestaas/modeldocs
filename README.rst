@@ -69,6 +69,13 @@ The format is pretty simple. It follows a very similar format to apidocs (check 
         @modelField {String="red","green","blue"} color the color of the motorcycle, with specified possible values.
         @modelField {String} [owner] the owner of the vehicle (optional due to brackets)
         @modelField {Number} [wheels=2] the number of wheels (default 2 as specified)
+
+        @modelExample {json} Motorcycle Example
+            {
+                "name": "yamaha v-star 650",
+                "year": 2007,
+                ...
+            }
         '''
         pass
 
