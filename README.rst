@@ -3,9 +3,8 @@ modeldocs
 
 modeldocs is a documentation generator for your model subclasses.
 
-If you have a bunch of data models that inherit from a common baseclass (or can change them to),
-modeldocs will allow you to automatically discover your subclasses and generate documentation for them
-by parsing a documentation format similar to apidocs (https://github.com/apidoc/apidoc)
+By parsing source code files, this generates documentation for your data models with
+a documentation format similar to apidocs (https://github.com/apidoc/apidoc)
 
 Installation
 ------------
@@ -21,7 +20,7 @@ Or from the project root directory::
 Usage
 -----
 
-First, create a configuration file in json, like (optional include)::
+First, create a configuration file in json, like (optional "include")::
 
     {
         "name": "My Documentation",
@@ -73,11 +72,8 @@ The format is pretty simple. It follows a very similar format to apidocs (check 
         '''
         pass
 
-That's all it takes. Just add doc strings like the above to all your classes and make sure they inherit from a similar baseclass,
-then write a json configuration that has the path to the base class' module, the name of the base class, and paths to all the modules
-that have subclasses of that base class.
-
-modeldocs will do the rest and generate the documentation into the "docs" directory.
+That's all it takes. Just add doc strings like the above to all your classes and it will recursively discover them
+and generate the documentation into the "docs" directory.
 
 Release Notes
 -------------
