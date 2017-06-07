@@ -208,10 +208,12 @@ class Document:
                     last_type, last_match = labeltype, match
                 # it's nothing, but we had something and it may be continuous
                 else:
-                    if last_type in (LabelType.description, LabelType.field):
+                    if last_type == LabelType.field:
                         last_match['description'] += ' ' + line.strip()
                     elif last_type == LabelType.example:
                         last_match['content'] += ' ' + line.strip()
+                    elif last_type == LabelType.description:
+                        last_match['value'] += ' ' + line.strip()
             else:
                 # This is the first thing we've seen in a bit
                 if labeltype:

@@ -85,6 +85,8 @@ and generate the documentation into the "docs" directory.
 Release Notes
 -------------
 
+:0.1.3:
+    Fix issue with labeltype description wrapping multiple lines
 :0.1.2:
     Add note to readme
 :0.1.1:
