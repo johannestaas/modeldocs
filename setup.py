@@ -11,7 +11,7 @@ def read(fname):
 
 setup(
     name="modeldocs",
-    version="0.1.3",
+    version="0.1.4",
     description="Documentation generator for your model subclasses.",
     author="Johan Nestaas",
     author_email="johannestaas@gmail.com",
